@@ -23,7 +23,9 @@ export interface IProfile extends Document {
   upwork_profile_url?: string
   referral_code: string
   referred_by?: mongoose.Types.ObjectId
-  auth_id: string
+  password_hash?: string
+  goal?: string
+  onboarding_completed: boolean
   created_at: Date
   updated_at: Date
 }
@@ -59,7 +61,9 @@ const ProfileSchema = new Schema<IProfile>(
       default: () => Math.random().toString(36).substring(2, 10).toUpperCase(),
     },
     referred_by: { type: Schema.Types.ObjectId, ref: 'Profile' },
-    auth_id: { type: String, required: true, unique: true },
+    password_hash: { type: String, select: false },
+    goal: String,
+    onboarding_completed: { type: Boolean, default: false },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 )

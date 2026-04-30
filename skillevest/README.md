@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SkillVest App
+
+> Earn While You Learn — Nigerian university students earn real income through verified digital skills.
+
+## Overview
+
+SkillVest is a mobile-first web app that connects Nigerian university students to paid digital skill tracks and a live gig marketplace. Students complete daily tasks, get AI-graded feedback, and withdraw real earnings via Paystack.
+
+## Features
+
+- **Skill Tracks** — Structured learning paths (copywriting, design, video, social media, affiliate, data entry)
+- **AI Grading** — Task submissions graded by Claude with rubric-based scoring and actionable feedback
+- **Gig Marketplace** — Escrow-protected gigs posted by B2B clients; apply, deliver, get paid
+- **Income Coach** — Claude-powered chat widget for earning advice tailored to each student's level
+- **Wallet** — Paystack-integrated balance, Nigerian bank account withdrawals, transaction history
+- **Leaderboard** — Weekly top earners ranked across the platform
+- **Premium** — ₦1,500/month subscription for higher gig limits and verified badge
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Database**: MongoDB / Mongoose
+- **Auth**: NextAuth v4 (JWT + credentials)
+- **AI**: Anthropic SDK (claude-sonnet-4-6)
+- **Payments**: Paystack
+- **Styling**: Tailwind CSS v4
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+cd skillevest
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+MONGODB_URI=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+ANTHROPIC_API_KEY=
+PAYSTACK_SECRET_KEY=
+PAYSTACK_PUBLIC_KEY=
+```

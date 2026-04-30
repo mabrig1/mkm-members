@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createTransferRecipient, initiateTransfer, generateReference } from '@/lib/paystack'
 import { connectDB } from '@/lib/mongodb/connection'
 import { Profile, Withdrawal, Transaction } from '@/lib/mongodb/models'
+import { notifyWithdrawalProcessing } from '@/lib/whatsapp/reminders'
 
 const MIN_WITHDRAWAL = 2000 // ₦2,000 minimum
 
@@ -60,6 +61,13 @@ export async function POST(request: NextRequest) {
       reference,
       reason: `SkillVest earnings withdrawal - ${profile.full_name}`,
     })
+
+    // Fire-and-forget — find the withdrawal we just created and notify
+    Withdrawal.findOne({ user_id, status: 'processing' })
+      .sort({ requested_at: -1 })
+      .lean()
+      .then((w) => { if (w) notifyWithdrawalProcessing(w._id.toString()).catch(() => {}) })
+      .catch(() => {})
 
     return NextResponse.json({ success: true, transfer_code: transfer.transfer_code })
   } catch (error: unknown) {

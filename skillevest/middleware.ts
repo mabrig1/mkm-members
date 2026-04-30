@@ -9,6 +9,7 @@ const PROTECTED_PREFIXES = [
   '/profile',
   '/wallet',
   '/notifications',
+  '/admin',
 ]
 
 const AUTH_PAGES = ['/login', '/register']
@@ -38,6 +39,14 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isAuthenticated) {
+    // Admin-only routes: non-admins bounce to dashboard
+    const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
+    if (isAdminRoute && token?.role !== 'admin') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+
     // Authenticated → login/register: redirect to appropriate page
     if (isAuthPage) {
       const url = request.nextUrl.clone()

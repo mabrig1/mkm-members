@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/whatsapp-reminders?type=daily",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/whatsapp-reminders?type=milestones",
+      "schedule": "30 8 * * *"
+    }
+  ]
+}

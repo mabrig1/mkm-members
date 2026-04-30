@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb/connection'
 import { Withdrawal, Profile, Transaction } from '@/lib/mongodb/models'
+import { notifyWithdrawalCompleted } from '@/lib/whatsapp/reminders'
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions)
@@ -65,6 +66,10 @@ export async function PATCH(
   const updated = await Withdrawal.findByIdAndUpdate(id, { $set: update }, { new: true })
     .populate('user_id', 'full_name email')
     .lean()
+
+  if (status === 'completed' || status === 'failed') {
+    notifyWithdrawalCompleted(id, status, failure_reason).catch(() => {})
+  }
 
   return NextResponse.json({ withdrawal: updated })
 }

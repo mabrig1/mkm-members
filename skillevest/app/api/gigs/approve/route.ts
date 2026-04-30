@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb/connection'
 import { Gig, Profile, Transaction, Notification } from '@/lib/mongodb/models'
 import { generateReference } from '@/lib/paystack'
+import { notifyGigPaid } from '@/lib/whatsapp/reminders'
 import mongoose from 'mongoose'
 
 async function awardXP(userId: string, xp: number) {
@@ -77,6 +78,9 @@ export async function POST(request: NextRequest) {
 
   // Award XP for completed gig
   await awardXP(workerId, 150)
+
+  // Fire-and-forget WhatsApp notification
+  notifyGigPaid(workerId, workerEarning, gig.title).catch(() => {})
 
   return NextResponse.json({ success: true, amount_released: workerEarning, reference })
 }

@@ -4,6 +4,7 @@ export interface IWithdrawal extends Document {
   user_id: mongoose.Types.ObjectId
   amount_naira: number
   bank_name: string
+  bank_code: string
   account_number: string
   account_name: string
   status: 'pending' | 'processing' | 'completed' | 'failed'
@@ -18,6 +19,7 @@ const WithdrawalSchema = new Schema<IWithdrawal>(
     user_id: { type: Schema.Types.ObjectId, ref: 'Profile', required: true },
     amount_naira: { type: Number, required: true, min: 0 },
     bank_name: { type: String, required: true },
+    bank_code: { type: String, default: '' },
     account_number: { type: String, required: true },
     account_name: { type: String, required: true },
     status: {

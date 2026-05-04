@@ -5,17 +5,12 @@ import { connectDB } from '@/lib/mongodb/connection'
 import { Withdrawal, Profile, Transaction, Notification } from '@/lib/mongodb/models'
 import { createTransferRecipient, initiateTransfer, generateReference } from '@/lib/paystack'
 
-function adminGuard(session: Awaited<ReturnType<typeof getServerSession>>) {
-  const role = (session?.user as { role?: string })?.role
-  return !session || role !== 'admin'
-}
-
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { searchParams } = new URL(request.url)
-  const status = searchParams.get('status') ?? 'pending'
+  const status = (searchParams.get('status') ?? 'pending') as 'pending' | 'processing' | 'completed' | 'failed'
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1'))
   const limit = 30
 
@@ -36,7 +31,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { withdrawal_id, action, reject_reason } = await request.json()
   if (!withdrawal_id || !action) {
@@ -76,19 +71,19 @@ export async function PATCH(request: NextRequest) {
     await Withdrawal.findByIdAndUpdate(withdrawal_id, { status: 'processing' })
 
     try {
-      const recipient = await createTransferRecipient(
-        withdrawal.account_name,
-        withdrawal.account_number,
-        withdrawal.bank_name
-      )
+      const recipient = await createTransferRecipient({
+        name: withdrawal.account_name,
+        account_number: withdrawal.account_number,
+        bank_code: withdrawal.bank_code ?? withdrawal.bank_name,
+      })
 
       const reference = generateReference('WD')
-      const transfer = await initiateTransfer(
-        withdrawal.amount_naira * 100,
-        recipient.recipient_code,
+      const transfer = await initiateTransfer({
+        amount_naira: withdrawal.amount_naira,
+        recipient_code: recipient.recipient_code,
         reference,
-        `Withdrawal: ${withdrawal.account_name}`
-      )
+        reason: `Withdrawal: ${withdrawal.account_name}`,
+      })
 
       await Promise.all([
         Withdrawal.findByIdAndUpdate(withdrawal_id, {

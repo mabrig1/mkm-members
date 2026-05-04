@@ -5,14 +5,9 @@ import { connectDB } from '@/lib/mongodb/connection'
 import { Gig, Profile, Transaction, Notification } from '@/lib/mongodb/models'
 import { generateReference } from '@/lib/paystack'
 
-function adminGuard(session: Awaited<ReturnType<typeof getServerSession>>) {
-  const role = (session?.user as { role?: string })?.role
-  return !session || role !== 'admin'
-}
-
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { searchParams } = new URL(request.url)
   const status = searchParams.get('status') ?? ''
@@ -40,7 +35,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { gig_id, action } = await request.json()
   if (!gig_id || !action) return NextResponse.json({ error: 'gig_id and action required' }, { status: 400 })

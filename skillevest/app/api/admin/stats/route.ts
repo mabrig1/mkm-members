@@ -51,7 +51,7 @@ export async function GET() {
           as: 'gig',
         },
       },
-      { $unwind: { path: '$gig', preserveNullAndEmpty: true } },
+      { $unwind: { path: '$gig', preserveNullAndEmptyArrays: true } },
       { $group: { _id: null, total: { $sum: '$gig.platform_fee_naira' } } },
     ]),
     Gig.countDocuments({ status: 'open' }),

@@ -4,14 +4,9 @@ import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb/connection'
 import { Profile } from '@/lib/mongodb/models'
 
-function adminGuard(session: Awaited<ReturnType<typeof getServerSession>>) {
-  const role = (session?.user as { role?: string })?.role
-  return !session || role !== 'admin'
-}
-
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { searchParams } = new URL(request.url)
   const q = searchParams.get('q') ?? ''
@@ -47,7 +42,7 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { user_id, action, role } = await request.json()
   if (!user_id || !action) return NextResponse.json({ error: 'user_id and action required' }, { status: 400 })

@@ -96,7 +96,7 @@ export async function GET() {
       tasks_completed: 0,
       xp_gained: 0,
       created_at: new Date(),
-    })) as typeof leaderboard
+    })) as unknown as typeof leaderboard
   }
 
   // Build sparkline: sum earnings per day for last 7 days

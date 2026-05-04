@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
 const DASHBOARD_PREFIXES = ['/dashboard', '/tracks', '/gigs', '/wallet', '/leaderboard', '/profile']
 const AUTH_PAGES = ['/login', '/register']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
@@ -32,7 +32,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // Authenticated but onboarding not complete → onboarding (skip if already there)
+  // Authenticated but onboarding not complete → onboarding
   if (
     token &&
     isDashboard &&

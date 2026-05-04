@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
 
     const leaderboardEntries = await LeaderboardEntry.find(filter)
       .populate('user_id', 'full_name level role')
-      .sort({ total_earned: -1 })
+      .sort({ total_earned_naira: -1 })
       .limit(100)
       .lean()
 
@@ -68,10 +68,9 @@ export async function GET(request: NextRequest) {
       }))
     } else {
       entries = leaderboardEntries.map((e, i) => ({
-        user_id: e.user_id as { full_name: string; level: number; role: string; _id: unknown },
-        total_earned: e.total_earned ?? 0,
+        user_id: e.user_id as unknown as { full_name: string; level: number; role: string; _id: unknown },
+        total_earned: e.total_earned_naira ?? 0,
         rank: i + 1,
-        prev_rank: (e as { prev_rank?: number }).prev_rank,
       }))
     }
   }

@@ -45,8 +45,8 @@ export const authOptions: NextAuthOptions = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as { role?: string }).role
-        token.onboarding_completed = (user as { onboarding_completed?: boolean }).onboarding_completed
+        token.role = user.role ?? 'novice'
+        token.onboarding_completed = user.onboarding_completed ?? false
       }
       return token
     },

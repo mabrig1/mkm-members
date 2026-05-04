@@ -4,14 +4,9 @@ import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/mongodb/connection'
 import { Track, Task } from '@/lib/mongodb/models'
 
-function adminGuard(session: Awaited<ReturnType<typeof getServerSession>>) {
-  const role = (session?.user as { role?: string })?.role
-  return !session || role !== 'admin'
-}
-
 export async function GET() {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   await connectDB()
 
@@ -29,7 +24,7 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (adminGuard(session)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session || session.user?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const { track_id, action } = await request.json()
   if (!track_id || !action) return NextResponse.json({ error: 'track_id and action required' }, { status: 400 })

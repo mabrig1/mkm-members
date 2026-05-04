@@ -79,7 +79,8 @@ export async function GET() {
   ])
 
   // Fallback leaderboard from profiles if no weekly entries yet
-  let leaderboard = leaderboardEntries
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let leaderboard: any[] = leaderboardEntries
   if (leaderboard.length === 0) {
     const topProfiles = await Profile.find({})
       .sort({ total_earned: -1 })
@@ -96,7 +97,7 @@ export async function GET() {
       tasks_completed: 0,
       xp_gained: 0,
       created_at: new Date(),
-    })) as unknown as typeof leaderboard
+    }))
   }
 
   // Build sparkline: sum earnings per day for last 7 days

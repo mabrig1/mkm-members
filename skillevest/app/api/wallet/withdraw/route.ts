@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
       user_id,
       amount_naira,
       bank_name,
+      bank_code,
       account_number,
       account_name,
       status: 'processing',

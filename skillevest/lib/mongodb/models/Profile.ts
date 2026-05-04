@@ -1,7 +1,6 @@
 import mongoose, { Document, Model, Schema } from 'mongoose'
 
 export interface IProfile extends Document {
-  _id: string
   email: string
   full_name: string
   phone?: string

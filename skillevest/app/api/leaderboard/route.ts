@@ -67,11 +67,12 @@ export async function GET(request: NextRequest) {
         rank: i + 1,
       }))
     } else {
-      entries = leaderboardEntries.map((e, i) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      entries = leaderboardEntries.map((e: any, i: number) => ({
         user_id: e.user_id as { full_name: string; level: number; role: string; _id: unknown },
-        total_earned: e.total_earned ?? 0,
+        total_earned: e.total_earned_naira ?? 0,
         rank: i + 1,
-        prev_rank: (e as { prev_rank?: number }).prev_rank,
+        prev_rank: e.prev_rank,
       }))
     }
   }

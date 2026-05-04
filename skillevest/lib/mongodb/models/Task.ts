@@ -32,7 +32,7 @@ const TaskSchema = new Schema<ITask>(
     max_score: { type: Number, default: 100 },
     xp_reward: { type: Number, default: 50 },
     naira_reward: { type: Number, default: 0 },
-    resources: { type: [Schema.Types.Mixed], default: [] },
+    resources: { type: [Schema.Types.Mixed] as unknown as typeof Schema.Types.Mixed, default: [] },
     is_peer_reviewed: { type: Boolean, default: false },
   },
   { timestamps: { createdAt: 'created_at', updatedAt: false } }
